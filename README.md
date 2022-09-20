@@ -17,6 +17,8 @@ Note that present implementations are intended for academic purposes, as such th
 <TODO>
 
 ## Version history
+* 00.03
+    * Implemented sequential LU decomposition BLAS2
 
 * 00.02
     * Created suitable matrix implementation

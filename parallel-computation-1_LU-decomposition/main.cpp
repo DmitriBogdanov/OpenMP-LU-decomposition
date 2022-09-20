@@ -16,28 +16,35 @@ int main(int argc, char *argv[]) {
 	cpp_standart();
 
 	/// TEMP (TESTING)
-	constexpr size_t ROWS = 8, COLS = 8;
+	constexpr size_t N = 500;
+	constexpr size_t ROWS = N, COLS = N;
+	constexpr bool print = false;
+
+	std::cout << "(" << ROWS << ", " << COLS << ")\n";
 
 	// Create random matrix
 	auto A = DMatrix(ROWS, COLS);
 	A.randomize();
-
-	std::cout << "A = \n" << A << "\n\n";
+	if (print) {
+		std::cout << "A = \n" << A << "\n\n";
+	};
 
 	// LU decomposition
 	auto L = DMatrix(ROWS, COLS), U = DMatrix(COLS, COLS);
 
-	//StaticTimer::start();
-	//LU_seq(A, L, U);
-	//std::cout << "Standart LU decomposition time: " << StaticTimer::end() << "(sec) \n";
 
-	//std::cout << "L = \n" << L << "\n\n" << "U = \n" << U << "\n";
-	//std::cout << "L * U = \n" << L * U << "\n";
+	// Experiments
+	LU_seq(A, L, U);
+	if (print) {
+		std::cout << "L = \n" << L << "\n\n" << "U = \n" << U << "\n";
+		std::cout << "L * U = \n" << L * U << "\n";
+	};
 	
-	LU_seq_2(A, L, U);
-
-	/*std::cout << "L = \n" << L << "\n\n" << "U = \n" << U << "\n";
-	std::cout << "L * U = \n" << L * U << "\n";*/
+	LU_seq_block(A, L, U);
+	if (print) {
+		std::cout << "L = \n" << L << "\n\n" << "U = \n" << U << "\n";
+		std::cout << "L * U = \n" << L * U << "\n";
+	};
 
 
 

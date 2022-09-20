@@ -10,7 +10,7 @@
 template <typename T>
 void LU_seq(const Matrix<T> &A, Matrix<T> &L, Matrix<T> &U) {
 	const size_t N = A.rows();
-
+	StaticTimer::start();
 	for (size_t i = 0; i < N; ++i) {
 
 		for (size_t j = 0; j < N; ++j) {
@@ -39,10 +39,15 @@ void LU_seq(const Matrix<T> &A, Matrix<T> &L, Matrix<T> &U) {
 			}
 		}
 	}
+	std::cout << "LU decomposition time: " << StaticTimer::end() / 1000 << "(sec) \n";
 }
 
+// Block LU decomposition
+// - Sequential
+// - No pivoting
+// - Time complexity O(?)
 template <typename T>
-void LU_seq_2(const Matrix<T>& A, Matrix<T>& L, Matrix<T>& U) {
+void LU_seq_block(const Matrix<T>& A, Matrix<T>& L, Matrix<T>& U) {
 	const size_t I = A.rows(), J = A.cols();
 	Matrix<T> LU(A);
 
@@ -60,8 +65,8 @@ void LU_seq_2(const Matrix<T>& A, Matrix<T>& L, Matrix<T>& U) {
 				for (size_t k = i + 1; k < J; ++k)
 					LU(j, k) = LU(j, k) - LU(j, i) * LU(i, k);
 	}
+	std::cout << "Block LU decomposition time: " << StaticTimer::end() / 1000 << "(sec) \n";
 
-	std::cout << "LU decomposition time: " << StaticTimer::end() << "(sec) \n";
 	for (size_t i = 0; i < I; ++i) {
 		L(i, i) = 1;
 		U(i, i) = LU(i, i);
@@ -70,15 +75,4 @@ void LU_seq_2(const Matrix<T>& A, Matrix<T>& L, Matrix<T>& U) {
 			U(i, j) = LU(i, j);
 		};
 	}
-}
-
-
-template <typename T>
-void LU_seq_block(const Matrix<T>& A, size_t bl_size = 2) {
-	size_t I = A.rows(), J = A.cols();
-	Matrix<T> L(I, J), U(J, J);
-	Matrix<T> LU(A);
-
-	//for(size_t i = 0; i < I - 1; i += bl_size)
-
 }
