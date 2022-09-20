@@ -1,6 +1,7 @@
 #pragma once
 
 #include "matrix.hpp"
+#include "static_timer.hpp"
 
 // LU decomposition
 // - Sequential
@@ -38,4 +39,46 @@ void LU_seq(const Matrix<T> &A, Matrix<T> &L, Matrix<T> &U) {
 			}
 		}
 	}
+}
+
+template <typename T>
+void LU_seq_2(const Matrix<T>& A, Matrix<T>& L, Matrix<T>& U) {
+	const size_t I = A.rows(), J = A.cols();
+	Matrix<T> LU(A);
+
+	size_t external_iters = (I - 1 > J) ? J : I - 1 ;
+
+	T divideAii;
+	StaticTimer::start();
+	for (size_t i = 0; i < external_iters; ++i) {
+		divideAii = 1 / LU(i, i);
+		for (size_t j = i + 1; j < I; ++j) {
+			LU(j, i) = LU(j, i) * divideAii;
+		}
+		if (i < J)
+			for (size_t j = i + 1; j < I; ++j)
+				for (size_t k = i + 1; k < J; ++k)
+					LU(j, k) = LU(j, k) - LU(j, i) * LU(i, k);
+	}
+
+	std::cout << "LU decomposition time: " << StaticTimer::end() << "(sec) \n";
+	for (size_t i = 0; i < I; ++i) {
+		L(i, i) = 1;
+		U(i, i) = LU(i, i);
+		for (size_t j = i + 1; j < J; ++j) {
+			L(j, i) = LU(j, i);
+			U(i, j) = LU(i, j);
+		};
+	}
+}
+
+
+template <typename T>
+void LU_seq_block(const Matrix<T>& A, size_t bl_size = 2) {
+	size_t I = A.rows(), J = A.cols();
+	Matrix<T> L(I, J), U(J, J);
+	Matrix<T> LU(A);
+
+	//for(size_t i = 0; i < I - 1; i += bl_size)
+
 }

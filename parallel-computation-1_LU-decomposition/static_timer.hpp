@@ -1,10 +1,6 @@
 #pragma once
-
 #include <chrono>
 #include <iostream>
-
-
-
 // # StaticTimer #
 // Small class used for time measurements, fully static aka does not require creating local instances
 // - Thread safe due to 'chrono::steady_clock' guarantees
