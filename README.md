@@ -18,6 +18,10 @@ Note that present implementations are intended for academic purposes, as such th
 
 ## Version history
 
+* 00.02
+    * Created suitable matrix implementation
+    * Implemented sequential LU decomposition
+
 * 00.01
     * Implemented thread safe timing
 
