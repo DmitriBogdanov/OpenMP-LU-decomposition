@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "LU_seq.hpp"
+#include "static_timer.hpp"
 
 void cpp_standart()
 {
@@ -15,40 +16,60 @@ void cpp_standart()
 int main(int argc, char *argv[]) {
 	cpp_standart();
 
-	/// TEMP (TESTING)
-	constexpr size_t N = 500;
-	constexpr size_t ROWS = N, COLS = N;
-	constexpr bool print = false;
-
-	std::cout << "(" << ROWS << ", " << COLS << ")\n";
+	constexpr size_t ROWS = 6;
+	constexpr size_t COLS = 6;
 
 	// Create random matrix
-	auto A = DMatrix(ROWS, COLS);
-	A.randomize();
-	if (print) {
-		std::cout << "A = \n" << A << "\n\n";
-	};
+	const auto INITIAL_MATRIX = DMatrix(ROWS, COLS).randomize();
 
-	// LU decomposition
-	auto L = DMatrix(ROWS, COLS), U = DMatrix(COLS, COLS);
+	std::cout << "MATRIX_DIMENSIONS = (" << ROWS << ", " << COLS << ")\n";
+	std::cout << "INITIAL_MATRIX =\n" << INITIAL_MATRIX << "\n\n";
 
+	// 1) Regular LU decomposition
+	{
+		auto A = INITIAL_MATRIX;
+		auto L = DMatrix(ROWS, ROWS);
+		auto U = DMatrix(ROWS, COLS);
 
-	// Experiments
-	LU_seq(A, L, U);
-	if (print) {
-		std::cout << "L = \n" << L << "\n\n" << "U = \n" << U << "\n";
-		std::cout << "L * U = \n" << L * U << "\n";
-	};
-	
-	LU_seq_block(A, L, U);
-	if (print) {
-		std::cout << "L = \n" << L << "\n\n" << "U = \n" << U << "\n";
-		std::cout << "L * U = \n" << L * U << "\n";
-	};
+		// Method
+		std::cout << ">>> Regular LU decomposition\n";
+		StaticTimer::start();
 
+		LU_seq(A);
 
+		std::cout << "Completed in " << StaticTimer::end() / 1000. << "sec\n";
 
+		// Display
+		split_into_LU(A, L, U);
+		std::cout
+			<< "A = \n" << A << "\n\n"
+			<< "L = \n" << L << "\n\n"
+			<< "U = \n" << U << "\n\n"
+			<< "L * U - INITIAL_MATRIX = \n" << L * U - INITIAL_MATRIX << "\n";
+	}
 
+	// 2) Block LU decomposition
+	{
+		auto A = INITIAL_MATRIX;
+		auto L = DMatrix(ROWS, ROWS);
+		auto U = DMatrix(ROWS, COLS);
+
+		// Method
+		std::cout << ">>> Block LU decomposition\n";
+		StaticTimer::start();
+
+		LU_seq_block(A);
+
+		std::cout << "Completed in " << StaticTimer::end() / 1000. << "sec\n";
+
+		// Display
+		split_into_LU(A, L, U);
+		std::cout
+			<< "A = \n" << A << "\n\n"
+			<< "L = \n" << L << "\n\n"
+			<< "U = \n" << U << "\n\n"
+			<< "L * U - INITIAL_MATRIX = \n" << L * U - INITIAL_MATRIX << "\n";
+	}
 
 	return 0;
 }

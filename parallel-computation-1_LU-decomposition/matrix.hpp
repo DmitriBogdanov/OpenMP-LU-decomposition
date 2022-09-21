@@ -33,21 +33,33 @@ struct Matrix {
 	size_t cols() const { return _cols; }
 
 	//Standart matrix multiplication
-	Matrix<T> operator*(const Matrix<T>& another_matrix)
-	{
-		if (this->cols() != another_matrix.rows())
-		{
-			std::cout << "Can't multiply this matrices! Please, check matrices's shapes.\n";
+	Matrix<T> operator*(const Matrix<T> &other) {
+		if (this->cols() != other.rows()) {
+			std::cout << "operator*(): incompatible matrices encountered.\n";
 			exit(1);
 		};
-		size_t I = this->rows(), J = another_matrix.cols(), K = this->cols();
-		Matrix<T> res(I,J);
 
-		for (size_t i = 0; i < I; ++i)
-			for (size_t j = 0; j < J; ++j)
-				for (size_t k = 0; k < K; ++k)
-					res(i, j) += this->operator()(i, k) * another_matrix(k, j);
-		return(res);
+		Matrix<T> res(this->rows(), other.cols());
+
+		for (size_t i = 0; i < this->rows(); ++i)
+			for (size_t j = 0; j < other.cols(); ++j)
+				for (size_t k = 0; k < this->cols(); ++k)
+					res(i, j) += this->operator()(i, k) * other(k, j);
+		return res;
+	}
+
+	Matrix<T> operator-(const Matrix<T> &other) {
+		if (this->rows() != other.rows() || this->cols() != other.cols()) {
+			std::cout << "operator-(): incompatible matrices encountered.\n";
+			exit(1);
+		};
+
+		Matrix<T> res = *this;
+
+		for (size_t i = 0; i < this->rows(); ++i)
+			for (size_t j = 0; j < this->cols(); ++j)
+					res(i, j) -= other(i, j);
+		return res;
 	}
 
 	// Utils
@@ -78,10 +90,19 @@ using IMatrix = Matrix<int>;
 
 
 template<typename T>
-std::ostream& operator<< (std::ostream &stream, const Matrix<T> &matrix) {
-	for (size_t i = 0; i < matrix.rows(); ++i) {
-		for (size_t j = 0; j < matrix.cols(); ++j) stream << std::setw(9) << matrix(i, j);
-		stream << '\n';
+std::ostream& operator<<(std::ostream &stream, const Matrix<T> &matrix) {
+	constexpr size_t MAX_DISPLAYED_ROWS = 12;
+	constexpr size_t MAX_DISPLAYED_COLS = 7;
+
+	if (matrix.rows() <= MAX_DISPLAYED_ROWS && matrix.cols() <= MAX_DISPLAYED_COLS) {
+		for (size_t i = 0; i < matrix.rows(); ++i) {
+			stream << std::setw(4) << '[';
+			for (size_t j = 0; j < matrix.cols(); ++j) stream << std::setw(9) << matrix(i, j);
+			stream << std::setw(4) << ']' << '\n';
+		}
+	}
+	else {
+		stream << "<supressed>";
 	}
 
 	return stream;

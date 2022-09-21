@@ -9,20 +9,26 @@ Note that present implementations are intended for academic purposes, as such th
 
 ## Compilation
 
-* Recommended compiler: <TODO>
+* Recommended compiler: -TODO-
 * Requires C++17 support
 
 ## Usage
 
-<TODO>
+-TODO-
 
 ## Version history
+* 00.04
+    * Refactored BLAS2 LU decomposition
+    * Implemented operations for matrix spans
+    * Partially implemented LU decomposition BLAS3 for blocks of set size (b = 2)
+    * General refactors
+
 * 00.03
-    * Implemented sequential LU decomposition BLAS2
+    * Implemented sequential LU decomposition BLAS2 in place
 
 * 00.02
     * Created suitable matrix implementation
-    * Implemented sequential LU decomposition
+    * Implemented sequential LU decomposition BLAS2
 
 * 00.01
     * Implemented thread safe timing
