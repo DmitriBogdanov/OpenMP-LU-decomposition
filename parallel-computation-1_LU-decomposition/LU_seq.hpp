@@ -39,9 +39,9 @@ void LU_seq_block(Matrix<T>& A) {
 	constexpr size_t b = 2;
 
 	auto inverseL22 = Matrix<T>(b, b); // temp storage for inversion result
-	auto temp = Matrix<T>(b, N);
+	auto temp = Matrix<T>(b, N - b);
 
-	for (size_t i = 0; i < N - 1; i += b) {
+	for (size_t i = 0; i < N; i += b) {
 		// (1)
 		// Find LU decomposition of block
 		const size_t rows = N - i;
@@ -60,7 +60,7 @@ void LU_seq_block(Matrix<T>& A) {
 
 		// (2)
 		// Save L22^-1
-		span_inverse(
+		span_inverse_LU(
 			A,
 			i, i,
 			b, b,
@@ -69,9 +69,11 @@ void LU_seq_block(Matrix<T>& A) {
 		);
 
 		// Copy a part of 'A' into temp since source and dest of matrix multiplication can't overlap
-		for (size_t _i = 0; _i < b - 1; ++_i)
+		for (size_t _i = 0; _i < b; ++_i)
 			for (size_t _j = 0; _j < N - i - b; ++_j)
 				temp(_i, _j) = A(i + _i, i + b + _j);
+
+		///std::cout << " i = " << i << "\nA = \n" << A << "\ntemp = \n" << temp << "\n\n";
 
 		// <block> = L22^-1 * <block>
 		span_set_product(
@@ -84,9 +86,7 @@ void LU_seq_block(Matrix<T>& A) {
 			A,
 			i, i + b
 		);
-		/// SOMETHING WRONG ON THAT STEP
-		/// since L * U - A is non zero in block A_13
-
+		
 		// (3)
 		// <block> -= <block 1> * <block 2>
 		span_substract_product(
@@ -100,6 +100,7 @@ void LU_seq_block(Matrix<T>& A) {
 			i + b,
 			i + b
 		);
+		/// SOMETHING WRONG ON THAT STEP
 	}
 }
 

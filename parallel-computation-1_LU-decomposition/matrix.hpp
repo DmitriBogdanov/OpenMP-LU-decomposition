@@ -97,7 +97,9 @@ std::ostream& operator<<(std::ostream &stream, const Matrix<T> &matrix) {
 	if (matrix.rows() <= MAX_DISPLAYED_ROWS && matrix.cols() <= MAX_DISPLAYED_COLS) {
 		for (size_t i = 0; i < matrix.rows(); ++i) {
 			stream << std::setw(4) << '[';
-			for (size_t j = 0; j < matrix.cols(); ++j) stream << std::setw(9) << matrix(i, j);
+			for (size_t j = 0; j < matrix.cols(); ++j) 
+				if (std::abs(matrix(i, j)) < 1000) stream << std::setw(10) << std::setprecision(4) << std::defaultfloat << matrix(i, j);
+				else stream << std::setw(10) << std::setprecision(1) << std::scientific << matrix(i, j);
 			stream << std::setw(4) << ']' << '\n';
 		}
 	}

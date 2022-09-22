@@ -5,15 +5,15 @@
 // Save inverse of source span
 // into dest span
 template <typename T>
-void span_inverse(
+void span_inverse_LU(
 	Matrix<T> &src, size_t src_i, size_t src_j, size_t rows, size_t cols,
 	Matrix<T> &dst, size_t dst_i, size_t dst_j) {
 
 	/// LET SIZE BE b = 2 SO THE INVERSE IS SIMPLE
-	const auto &a = src(src_i, src_j);
-	const auto &b = src(src_i, src_j + 1);
-	const auto &c = src(src_i + 1, src_j);
-	const auto &d = src(src_i + 1, src_j + 1);
+	const auto a = 1;// src(src_i, src_j);
+	const auto b = 0;// src(src_i, src_j + 1);
+	const auto c = src(src_i + 1, src_j);
+	const auto d = 1;// src(src_i + 1, src_j + 1);
 
 	const T inverseDet = 1. / (a * d - b * c);
 

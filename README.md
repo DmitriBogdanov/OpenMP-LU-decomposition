@@ -17,6 +17,9 @@ Note that present implementations are intended for academic purposes, as such th
 -TODO-
 
 ## Version history
+* 00.05
+    * Bugfixes in BLAS3 decomposition, narrowed down issues to step (3)
+
 * 00.04
     * Refactored BLAS2 LU decomposition
     * Implemented operations for matrix spans
