@@ -15,7 +15,7 @@ void LU_seq(Matrix<T> &A) {
 
 	for (size_t i = 0; i < std::min(ROWS - 1, COLS); ++i) {
 		// (1)
-		const T inverseAii = 1. / A(i, i);
+		const T inverseAii = T(1) / A(i, i);
 
 		for (size_t j = i + 1; j < ROWS; ++j)
 			A(j, i) *= inverseAii;
@@ -32,11 +32,9 @@ void LU_seq(Matrix<T> &A) {
 // - No pivoting
 // - Time complexity O(?)
 template <typename T>
-void LU_seq_block(Matrix<T>& A) {
+void LU_seq_block(Matrix<T>& A, const size_t b) {
 	/// For now ROWS = COLS like in the literature
 	const size_t N = A.rows();
-
-	constexpr size_t b = 2;
 
 	auto inverseL22 = Matrix<T>(b, b); // temp storage for inversion result
 	auto temp = Matrix<T>(b, N - b);
@@ -47,45 +45,27 @@ void LU_seq_block(Matrix<T>& A) {
 		const size_t rows = N - i;
 		const size_t cols = b;
 
-		for (size_t _i = i; _i < std::min(rows - 1, cols); ++_i) {
-			const T inverseAii = 1. / A(_i, _i);
+		for (size_t _i = 0; _i < std::min(rows - 1, cols); ++_i) {
+			const T inverseAii = T(1) / A(_i + i, _i + i);
 
 			for (size_t _j = _i + 1; _j < rows; ++_j)
-				A(_j, _i) *= inverseAii;
+				A(_j + i, _i + i) *= inverseAii;
 
 			for (size_t _j = _i + 1; _j < rows; ++_j)
 				for (size_t _k = _i + 1; _k < cols; ++_k)
-					A(_j, _k) -= A(_j, _i) * A(_i, _k);
+					A(_j + i, _k + i) -= A(_j + i, _i + i) * A(_i + i, _k + i);
 		}
-
 		// (2)
-		// Save L22^-1
-		span_inverse_LU(
+		//L22 * U23 = A23 <=> U23 = L22^-1 * A23
+		inverse(
 			A,
 			i, i,
 			b, b,
-			inverseL22,
-			0, 0
-		);
-
-		// Copy a part of 'A' into temp since source and dest of matrix multiplication can't overlap
-		for (size_t _i = 0; _i < b; ++_i)
-			for (size_t _j = 0; _j < N - i - b; ++_j)
-				temp(_i, _j) = A(i + _i, i + b + _j);
-
-		///std::cout << " i = " << i << "\nA = \n" << A << "\ntemp = \n" << temp << "\n\n";
-
-		// <block> = L22^-1 * <block>
-		span_set_product(
-			inverseL22,
-			0, 0,
-			b, b,
-			temp,
-			0, 0,
-			b, N - i - b,
 			A,
-			i, i + b
+			i, i + b,
+			b, N - b - i
 		);
+	
 		
 		// (3)
 		// <block> -= <block 1> * <block 2>
@@ -144,3 +124,33 @@ void LU_seq_2_9(Matrix<T>& A) {
 					A(j, k) -= A(j, i) * A(i, k);
 	}
 }*/
+
+
+//// (2)
+//		// Save L22^-1
+//span_inverse_LU(
+//	A,
+//	i, i,
+//	b, b,
+//	inverseL22,
+//	0, 0
+//);
+//
+//// Copy a part of 'A' into temp since source and dest of matrix multiplication can't overlap
+//for (size_t _i = 0; _i < b; ++_i)
+//	for (size_t _j = 0; _j < N - i - b; ++_j)
+//		temp(_i, _j) = A(i + _i, i + b + _j);
+//
+/////std::cout << " i = " << i << "\nA = \n" << A << "\ntemp = \n" << temp << "\n\n";
+//
+//// <block> = L22^-1 * <block>
+//span_set_product(
+//	inverseL22,
+//	0, 0,
+//	b, b,
+//	temp,
+//	0, 0,
+//	b, N - i - b,
+//	A,
+//	i, i + b
+//);

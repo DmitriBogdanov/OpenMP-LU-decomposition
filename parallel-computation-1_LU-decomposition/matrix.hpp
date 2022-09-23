@@ -73,6 +73,13 @@ struct Matrix {
 		return *this;
 	}
 
+	T max_elem() const {
+		T res = 0;
+		for (size_t i = 0; i < _data.size(); ++i)
+			if (res < fabs(_data[i])) res = fabs(_data[i]);
+		return(res);
+	}
+
 	std::vector<T> _data;
 		// direct access for your dirty little needs, use with caution
 
@@ -92,7 +99,7 @@ using IMatrix = Matrix<int>;
 template<typename T>
 std::ostream& operator<<(std::ostream &stream, const Matrix<T> &matrix) {
 	constexpr size_t MAX_DISPLAYED_ROWS = 12;
-	constexpr size_t MAX_DISPLAYED_COLS = 7;
+	constexpr size_t MAX_DISPLAYED_COLS = 8;
 
 	if (matrix.rows() <= MAX_DISPLAYED_ROWS && matrix.cols() <= MAX_DISPLAYED_COLS) {
 		for (size_t i = 0; i < matrix.rows(); ++i) {
