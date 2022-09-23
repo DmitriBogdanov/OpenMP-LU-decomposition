@@ -17,6 +17,9 @@ Note that present implementations are intended for academic purposes, as such th
 -TODO-
 
 ## Version history
+* 00.06
+    * Implemented BLAS3 LU factorization
+
 * 00.05
     * Bugfixes in BLAS3 decomposition, narrowed down issues to step (3)
 

@@ -16,8 +16,9 @@ void cpp_standart()
 int main(int argc, char *argv[]) {
 	cpp_standart();
 
-	constexpr size_t ROWS = 3000;
-	constexpr size_t COLS = 3000;
+	constexpr size_t ROWS = 600;
+	constexpr size_t COLS = 600;
+	constexpr size_t BLOCK_SIZE = 20;
 
 	// Create random matrix
 	const auto INITIAL_MATRIX = DMatrix(ROWS, COLS).randomize();
@@ -46,7 +47,7 @@ int main(int argc, char *argv[]) {
 			<< "A = \n" << A << "\n\n"
 			<< "L = \n" << L << "\n\n"
 			<< "U = \n" << U << "\n\n"
-			<< "max_norm(L * U - INITIAL_MATRIX) = \n" << (L * U - INITIAL_MATRIX).max_elem() << "\n";
+			<< "max_norm(L * U - INITIAL_MATRIX) = \n\n" << (L * U - INITIAL_MATRIX).max_elem() << "\n\n";
 	}
 
 	// 2) Block LU decomposition
@@ -58,11 +59,11 @@ int main(int argc, char *argv[]) {
 		// Method
 		std::cout << ">>> Block LU decomposition\n";
 		StaticTimer::start();
-		const size_t b = 4;
-		LU_seq_block(A, b);
+
+		LU_seq_block(A, BLOCK_SIZE);
 
 		time2 = StaticTimer::end() / 1000.;
-		std::cout << "Completed in " << time2 << "sec\n";
+		std::cout << "Completed in " << time2 << "sec\n\n";
 
 		// Display
 		split_into_LU(A, L, U);
@@ -70,8 +71,9 @@ int main(int argc, char *argv[]) {
 			<< "A = \n" << A << "\n\n"
 			<< "L = \n" << L << "\n\n"
 			<< "U = \n" << U << "\n\n"
-			<< "max_norm(L * U - INITIAL_MATRIX) = \n" << (L * U - INITIAL_MATRIX).max_elem() << "\n";
+			<< "max_norm(L * U - INITIAL_MATRIX) = \n" << (L * U - INITIAL_MATRIX).max_elem() << "\n\n";
 	}
+
 	std::cout << "Time block / Time seq = " << time2 / time1 << "\n";
 
 	return 0;

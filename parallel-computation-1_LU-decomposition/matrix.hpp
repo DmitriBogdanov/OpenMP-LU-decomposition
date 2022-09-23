@@ -75,9 +75,11 @@ struct Matrix {
 
 	T max_elem() const {
 		T res = 0;
-		for (size_t i = 0; i < _data.size(); ++i)
-			if (res < fabs(_data[i])) res = fabs(_data[i]);
-		return(res);
+
+		for (const auto &el : _data)
+			if (res < abs(el)) res = abs(el);
+
+		return res;
 	}
 
 	std::vector<T> _data;

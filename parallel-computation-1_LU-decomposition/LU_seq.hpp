@@ -33,7 +33,7 @@ void LU_seq(Matrix<T> &A) {
 // - Time complexity O(?)
 template <typename T>
 void LU_seq_block(Matrix<T>& A, const size_t b) {
-	/// For now ROWS = COLS like in the literature
+	// ROWS = COLS like in the literature
 	const size_t N = A.rows();
 
 	auto inverseL22 = Matrix<T>(b, b); // temp storage for inversion result
@@ -55,9 +55,11 @@ void LU_seq_block(Matrix<T>& A, const size_t b) {
 				for (size_t _k = _i + 1; _k < cols; ++_k)
 					A(_j + i, _k + i) -= A(_j + i, _i + i) * A(_i + i, _k + i);
 		}
+
 		// (2)
-		//L22 * U23 = A23 <=> U23 = L22^-1 * A23
-		inverse(
+		// Solve systems L22 * U23 = A23
+		// As a result we U23 = L22^-1 * A23
+		span_get_U23(
 			A,
 			i, i,
 			b, b,
@@ -80,7 +82,6 @@ void LU_seq_block(Matrix<T>& A, const size_t b) {
 			i + b,
 			i + b
 		);
-		/// SOMETHING WRONG ON THAT STEP
 	}
 }
 
