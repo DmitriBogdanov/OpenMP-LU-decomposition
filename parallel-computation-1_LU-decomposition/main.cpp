@@ -5,11 +5,11 @@
 
 void cpp_standart()
 {
-	if (__cplusplus == 201703L) std::cout << "C++17\n";
-	else if (__cplusplus == 201402L) std::cout << "C++14\n";
-	else if (__cplusplus == 201103L) std::cout << "C++11\n";
-	else if (__cplusplus == 199711L) std::cout << "C++98\n";
-	else std::cout << "pre-standard C++\n";
+	if (_MSVC_LANG == 201703L) std::cout << "C++17\n";
+	else if (_MSVC_LANG == 201402L) std::cout << "C++14\n";
+	else if (_MSVC_LANG == 201103L) std::cout << "C++11\n";
+	else if (_MSVC_LANG == 199711L) std::cout << "C++98\n";
+	else std::cout << "pre-standard C++\n\n";
 }
 
 
@@ -18,14 +18,16 @@ int main(int argc, char *argv[]) {
 
 	constexpr size_t ROWS = 600;
 	constexpr size_t COLS = 600;
-	constexpr size_t BLOCK_SIZE = 20;
+	constexpr size_t BLOCK_SIZE = 40;
 
 	// Create random matrix
 	const auto INITIAL_MATRIX = DMatrix(ROWS, COLS).randomize();
 
-	std::cout << "MATRIX_DIMENSIONS = (" << ROWS << ", " << COLS << ")\n";
-	std::cout << "INITIAL_MATRIX =\n" << INITIAL_MATRIX << "\n\n";
-	double time1, time2;
+	std::cout << "MATRIX_DIMENSIONS = (" << ROWS << ", " << COLS << ")\n\n";
+	std::cout << "INITIAL_MATRIX = " << INITIAL_MATRIX << "\n\n";
+
+	double time1 = 0, time2 = 0;
+
 	// 1) Regular LU decomposition
 	{
 		auto A = INITIAL_MATRIX;
@@ -39,19 +41,20 @@ int main(int argc, char *argv[]) {
 		LU_seq(A);
 
 		time1 = StaticTimer::end() / 1000.;
-		std::cout << "Completed in " << time1 << "sec\n";
+		std::cout << "Completed in " << time1 << "sec\n\n";
 
 		// Display
 		split_into_LU(A, L, U);
+
 		std::cout
-			<< "A = \n" << A << "\n\n"
-			<< "L = \n" << L << "\n\n"
-			<< "U = \n" << U << "\n\n"
-			<< "max_norm(L * U - INITIAL_MATRIX) = \n\n" << (L * U - INITIAL_MATRIX).max_elem() << "\n\n";
+			<< "A = " << A << "\n\n"
+			<< "L = " << L << "\n\n"
+			<< "U = " << U << "\n\n"
+			<< "max_norm(L * U - INITIAL_MATRIX) = " << (L * U - INITIAL_MATRIX).max_elem() << "\n\n";
 	}
 
 	// 2) Block LU decomposition
-	{
+	if (ROWS == COLS) {
 		auto A = INITIAL_MATRIX;
 		auto L = DMatrix(ROWS, std::min(ROWS, COLS));
 		auto U = DMatrix(std::min(ROWS, COLS), COLS);
@@ -68,10 +71,13 @@ int main(int argc, char *argv[]) {
 		// Display
 		split_into_LU(A, L, U);
 		std::cout
-			<< "A = \n" << A << "\n\n"
-			<< "L = \n" << L << "\n\n"
-			<< "U = \n" << U << "\n\n"
-			<< "max_norm(L * U - INITIAL_MATRIX) = \n" << (L * U - INITIAL_MATRIX).max_elem() << "\n\n";
+			<< "A = " << A << "\n\n"
+			<< "L = " << L << "\n\n"
+			<< "U = " << U << "\n\n"
+			<< "max_norm(L * U - INITIAL_MATRIX) = " << (L * U - INITIAL_MATRIX).max_elem() << "\n\n";
+	}
+	else {
+		std::cout << ">>> ROWS != COLS, Block LU decomposition supressed.\n\n";
 	}
 
 	std::cout << "Time block / Time seq = " << time2 / time1 << "\n";

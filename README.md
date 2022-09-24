@@ -17,6 +17,9 @@ Note that present implementations are intended for academic purposes, as such th
 -TODO-
 
 ## Version history
+* 00.07
+    * Fixed incorrect LU split for rectangular matrices with more rows
+
 * 00.06
     * Implemented BLAS3 LU factorization
 

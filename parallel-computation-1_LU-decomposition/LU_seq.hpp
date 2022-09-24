@@ -58,8 +58,8 @@ void LU_seq_block(Matrix<T>& A, const size_t b) {
 
 		// (2)
 		// Solve systems L22 * U23 = A23
-		// As a result we U23 = L22^-1 * A23
-		span_get_U23(
+		// to get U23 = L22^-1 * A23
+		span_set_product_inverseL_by_self(
 			A,
 			i, i,
 			b, b,
@@ -70,7 +70,7 @@ void LU_seq_block(Matrix<T>& A, const size_t b) {
 	
 		
 		// (3)
-		// <block> -= <block 1> * <block 2>
+		// A33 -= A32 * A23
 		span_substract_product(
 			A,
 			i + b, i,
@@ -88,70 +88,18 @@ void LU_seq_block(Matrix<T>& A, const size_t b) {
 // Splits LU saved as a single matrix into separate objects
 template <typename T>
 void split_into_LU(const Matrix<T>& A, Matrix<T>& L, Matrix<T>& U) {
+	const auto MIN = std::min(A.rows(), A.cols());
+
 	// L (ROWS x ROWS)
 	for (size_t i = 0; i < A.rows(); ++i) {
-		for (size_t j = 0; j < i; ++j) L(i, j) = A(i, j);
-		L(i, i) = 1;
-		for (size_t j = i + 1; j < A.rows(); ++j) L(i, j) = 0;
+		for (size_t j = 0; j < std::min(i, MIN); ++j) L(i, j) = A(i, j);
+		if (i < MIN) L(i, i) = 1;
+		for (size_t j = i + 1; j < MIN; ++j) L(i, j) = 0;
 	}
 
 	// U (ROWS x COLS)
-	for (size_t i = 0; i < A.rows(); ++i) {
+	for (size_t i = 0; i < MIN; ++i) {
 		for (size_t j = 0; j < i; ++j) U(i, j) = 0;
 		for (size_t j = i; j < A.cols(); ++j) U(i, j) = A(i, j);
 	}
 }
-
-
-// The only difference bethween method 2_9 and method 2_4 is 'if (i < COLS)'
-// which seemingly doesn't have any effect on the behaviour since the condition is always true
-/*
-template <typename T>
-void LU_seq_2_9(Matrix<T>& A) {
-	const size_t ROWS = A.rows();
-	const size_t COLS = A.cols();
-
-	constexpr BLOCK_SIZE = 2;
-
-	for (size_t i = 0; i < std::min(ROWS - 1, COLS); i += BLOCK_SIZE) {
-		const T inverseAii = 1. / A(i, i);
-
-		for (size_t j = i + 1; j < ROWS; ++j)
-			A(j, i) *= inverseAii;
-
-		if (i < COLS)
-			for (size_t j = i + 1; j < ROWS; ++j)
-				for (size_t k = i + 1; k < COLS; ++k)
-					A(j, k) -= A(j, i) * A(i, k);
-	}
-}*/
-
-
-//// (2)
-//		// Save L22^-1
-//span_inverse_LU(
-//	A,
-//	i, i,
-//	b, b,
-//	inverseL22,
-//	0, 0
-//);
-//
-//// Copy a part of 'A' into temp since source and dest of matrix multiplication can't overlap
-//for (size_t _i = 0; _i < b; ++_i)
-//	for (size_t _j = 0; _j < N - i - b; ++_j)
-//		temp(_i, _j) = A(i + _i, i + b + _j);
-//
-/////std::cout << " i = " << i << "\nA = \n" << A << "\ntemp = \n" << temp << "\n\n";
-//
-//// <block> = L22^-1 * <block>
-//span_set_product(
-//	inverseL22,
-//	0, 0,
-//	b, b,
-//	temp,
-//	0, 0,
-//	b, N - i - b,
-//	A,
-//	i, i + b
-//);

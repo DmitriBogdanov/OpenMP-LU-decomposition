@@ -104,6 +104,8 @@ std::ostream& operator<<(std::ostream &stream, const Matrix<T> &matrix) {
 	constexpr size_t MAX_DISPLAYED_COLS = 8;
 
 	if (matrix.rows() <= MAX_DISPLAYED_ROWS && matrix.cols() <= MAX_DISPLAYED_COLS) {
+		std::cout << '\n';
+
 		for (size_t i = 0; i < matrix.rows(); ++i) {
 			stream << std::setw(4) << '[';
 			for (size_t j = 0; j < matrix.cols(); ++j) 
