@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <ostream>
 #include <iomanip>
+#include <assert.h>
 
 template <typename T>
 struct Matrix {

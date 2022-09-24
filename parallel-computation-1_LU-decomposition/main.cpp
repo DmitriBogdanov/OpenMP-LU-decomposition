@@ -16,9 +16,9 @@ void cpp_standart()
 int main(int argc, char *argv[]) {
 	cpp_standart();
 
-	constexpr size_t ROWS = 600;
-	constexpr size_t COLS = 600;
-	constexpr size_t BLOCK_SIZE = 40;
+	const size_t ROWS = 10;
+	const size_t COLS = 10;
+	const size_t BLOCK_SIZE = 2;
 
 	// Create random matrix
 	const auto INITIAL_MATRIX = DMatrix(ROWS, COLS).randomize();
@@ -30,9 +30,7 @@ int main(int argc, char *argv[]) {
 
 	// 1) Regular LU decomposition
 	{
-		auto A = INITIAL_MATRIX;
-		auto L = DMatrix(ROWS, std::min(ROWS, COLS));
-		auto U = DMatrix(std::min(ROWS, COLS), COLS);
+		DMatrix A(INITIAL_MATRIX);
 
 		// Method
 		std::cout << ">>> Regular LU decomposition\n";
@@ -43,21 +41,14 @@ int main(int argc, char *argv[]) {
 		time1 = StaticTimer::end() / 1000.;
 		std::cout << "Completed in " << time1 << "sec\n\n";
 
-		// Display
-		split_into_LU(A, L, U);
-
 		std::cout
 			<< "A = " << A << "\n\n"
-			<< "L = " << L << "\n\n"
-			<< "U = " << U << "\n\n"
-			<< "max_norm(L * U - INITIAL_MATRIX) = " << (L * U - INITIAL_MATRIX).max_elem() << "\n\n";
+			<< "L * U = " << product_LU(A) << "\n\n";
 	}
 
 	// 2) Block LU decomposition
 	if (ROWS == COLS) {
-		auto A = INITIAL_MATRIX;
-		auto L = DMatrix(ROWS, std::min(ROWS, COLS));
-		auto U = DMatrix(std::min(ROWS, COLS), COLS);
+		DMatrix A(INITIAL_MATRIX);
 
 		// Method
 		std::cout << ">>> Block LU decomposition\n";
@@ -68,13 +59,9 @@ int main(int argc, char *argv[]) {
 		time2 = StaticTimer::end() / 1000.;
 		std::cout << "Completed in " << time2 << "sec\n\n";
 
-		// Display
-		split_into_LU(A, L, U);
 		std::cout
 			<< "A = " << A << "\n\n"
-			<< "L = " << L << "\n\n"
-			<< "U = " << U << "\n\n"
-			<< "max_norm(L * U - INITIAL_MATRIX) = " << (L * U - INITIAL_MATRIX).max_elem() << "\n\n";
+			<< "L * U = " << product_LU(A) << "\n\n";
 	}
 	else {
 		std::cout << ">>> ROWS != COLS, Block LU decomposition supressed.\n\n";
