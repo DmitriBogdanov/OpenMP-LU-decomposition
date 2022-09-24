@@ -36,42 +36,118 @@ void LU_seq_block(Matrix<T>& A, const size_t b) {
 	// ROWS = COLS like in the literature
 	const size_t N = A.rows();
 
-	auto inverseL22 = Matrix<T>(b, b); // temp storage for inversion result
-	auto temp = Matrix<T>(b, N - b);
+	Matrix<T> A_22(b, b);
+	Matrix<T> A_23(b, N - b);
+	Matrix<T> A_32(N - b, b);
+
+	Matrix<T> A_22_32(N, b);
 
 	for (size_t i = 0; i < N; i += b) {
 		// (1)
-		// Find LU decomposition of block
-		const size_t rows = N - i;
-		const size_t cols = b;
+		// Find LU decomposition of block (A22 & A32)
+		const size_t rows1 = N - i;
+		const size_t cols1 = b;
 
-		for (size_t _i = 0; _i < std::min(rows - 1, cols); ++_i) {
-			const T inverseAii = T(1) / A(_i + i, _i + i);
+		span_copy(
+			A,
+			i, i,
+			rows1, cols1,
+			A_22_32,
+			0, 0
+		);
 
-			for (size_t _j = _i + 1; _j < rows; ++_j)
-				A(_j + i, _i + i) *= inverseAii;
+		span_LU_decomposition(
+			A_22_32,
+			0, 0,
+			rows1, cols1
+		);
 
-			for (size_t _j = _i + 1; _j < rows; ++_j)
-				for (size_t _k = _i + 1; _k < cols; ++_k)
-					A(_j + i, _k + i) -= A(_j + i, _i + i) * A(_i + i, _k + i);
-		}
+		span_copy(
+			A_22_32,
+			0, 0,
+			rows1, cols1,
+			A,
+			i, i
+		);
+
+		/// Regular version
+		/*span_LU_decomposition(
+			A,
+			i, i,
+			N - i, b
+		);*/
 
 		// (2)
 		// Solve systems L22 * U23 = A23
 		// to get U23 = L22^-1 * A23
+		span_copy_same_cols(
+			A_22_32,
+			0, 0,
+			b, b,
+			A_22,
+			0, 0
+		);
+
+		span_copy(
+			A,
+			i, i + b,
+			b, N - b - i,
+			A_23,
+			0, 0
+		);
+
 		span_set_product_inverseL_by_self(
+			A_22,
+			0, 0,
+			b, b,
+			A_23,
+			0, 0,
+			b, N - b - i
+		);
+
+		span_copy(
+			A_23,
+			0, 0,
+			b, N - b - i,
+			A,
+			i, i + b
+		);
+
+		/// Regular version
+		/*span_set_product_inverseL_by_self(
 			A,
 			i, i,
 			b, b,
 			A,
 			i, i + b,
 			b, N - b - i
-		);
+		);*/
 	
 		
 		// (3)
 		// A33 -= A32 * A23
+		span_copy_same_cols(
+			A_22_32,
+			0, 0,
+			N - b - i, b,
+			A_32,
+			0, 0
+		);
+
 		span_substract_product(
+			A_32,
+			0, 0,
+			N - b - i, b,
+			A_23,
+			0, 0,
+			b, N - b - i,
+			A,
+			i + b,
+			i + b
+		);
+
+		/// Regular version
+		/*span_substract_product(
 			A,
 			i + b, i,
 			N - b - i, b,
@@ -81,7 +157,7 @@ void LU_seq_block(Matrix<T>& A, const size_t b) {
 			A,
 			i + b,
 			i + b
-		);
+		);*/
 	}
 }
 

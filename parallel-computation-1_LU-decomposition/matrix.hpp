@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <ostream>
 #include <iomanip>
+#include <cassert>
 
 template <typename T>
 struct Matrix {
@@ -34,10 +35,7 @@ struct Matrix {
 
 	//Standart matrix multiplication
 	Matrix<T> operator*(const Matrix<T> &other) {
-		if (this->cols() != other.rows()) {
-			std::cout << "operator*(): incompatible matrices encountered.\n";
-			exit(1);
-		};
+		assert(this->cols() == other.rows() && "operator*(): incompatible matrices encountered.");
 
 		Matrix<T> res(this->rows(), other.cols());
 
@@ -49,10 +47,8 @@ struct Matrix {
 	}
 
 	Matrix<T> operator-(const Matrix<T> &other) {
-		if (this->rows() != other.rows() || this->cols() != other.cols()) {
-			std::cout << "operator-(): incompatible matrices encountered.\n";
-			exit(1);
-		};
+		assert(this->rows() == other.rows() || this->cols() == other.cols()
+			&& "operator-(): incompatible matrices encountered.");
 
 		Matrix<T> res = *this;
 
@@ -81,6 +77,8 @@ struct Matrix {
 
 		return res;
 	}
+
+	
 
 	std::vector<T> _data;
 		// direct access for your dirty little needs, use with caution

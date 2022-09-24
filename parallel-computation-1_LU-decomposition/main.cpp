@@ -16,9 +16,9 @@ void cpp_standart()
 int main(int argc, char *argv[]) {
 	cpp_standart();
 
-	constexpr size_t ROWS = 600;
-	constexpr size_t COLS = 600;
-	constexpr size_t BLOCK_SIZE = 40;
+	constexpr size_t ROWS = 3200;
+	constexpr size_t COLS = 3200;
+	constexpr size_t BLOCK_SIZE = 32;
 
 	// Create random matrix
 	const auto INITIAL_MATRIX = DMatrix(ROWS, COLS).randomize();
@@ -44,13 +44,10 @@ int main(int argc, char *argv[]) {
 		std::cout << "Completed in " << time1 << "sec\n\n";
 
 		// Display
-		split_into_LU(A, L, U);
-
+		/*split_into_LU(A, L, U);
 		std::cout
 			<< "A = " << A << "\n\n"
-			<< "L = " << L << "\n\n"
-			<< "U = " << U << "\n\n"
-			<< "max_norm(L * U - INITIAL_MATRIX) = " << (L * U - INITIAL_MATRIX).max_elem() << "\n\n";
+			<< "max_norm(L * U - INITIAL_MATRIX) = " << (L * U - INITIAL_MATRIX).max_elem() << "\n\n";*/
 	}
 
 	// 2) Block LU decomposition
@@ -70,11 +67,9 @@ int main(int argc, char *argv[]) {
 
 		// Display
 		split_into_LU(A, L, U);
-		std::cout
+		/*std::cout
 			<< "A = " << A << "\n\n"
-			<< "L = " << L << "\n\n"
-			<< "U = " << U << "\n\n"
-			<< "max_norm(L * U - INITIAL_MATRIX) = " << (L * U - INITIAL_MATRIX).max_elem() << "\n\n";
+			<< "max_norm(L * U - INITIAL_MATRIX) = " << (L * U - INITIAL_MATRIX).max_elem() << "\n\n";*/
 	}
 	else {
 		std::cout << ">>> ROWS != COLS, Block LU decomposition supressed.\n\n";
