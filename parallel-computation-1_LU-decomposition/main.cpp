@@ -16,9 +16,9 @@ void cpp_standart()
 int main(int argc, char *argv[]) {
 	cpp_standart();
 
-	constexpr size_t ROWS = 3200;
-	constexpr size_t COLS = 3200;
-	constexpr size_t BLOCK_SIZE = 32;
+	const size_t ROWS = 256;
+	const size_t COLS = 256;
+	const size_t BLOCK_SIZE = 8;
 
 	// Create random matrix
 	const auto INITIAL_MATRIX = DMatrix(ROWS, COLS).randomize();

@@ -22,8 +22,8 @@ struct Matrix {
 	Matrix(Matrix<every_type> matrix) : _rows(matrix.rows()), _cols(matrix.cols()), _data(*matrix._data) {}
 
 	// 2D indexation
-	T& operator()(size_t i, size_t j) { return _data[i * _cols + j]; }
-	const T& operator()(size_t i, size_t j) const { return _data[i * _cols + j]; }
+	inline T& operator()(size_t i, size_t j) { return _data[i * _cols + j]; }
+	inline const T& operator()(size_t i, size_t j) const { return _data[i * _cols + j]; }
 
 	// 1D indexation
 	T& operator[](size_t index) { return _data[index]; }
@@ -67,6 +67,12 @@ struct Matrix {
 			// loosely ensure maximum possible rank
 
 		return *this;
+	}
+
+	void downsize(size_t newRows, size_t newCols) {
+		_rows = newRows;
+		_cols = newCols;
+		_data.resize(_rows * _cols);
 	}
 
 	T max_elem() const {
