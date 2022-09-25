@@ -93,7 +93,7 @@ void LU_seq_block(Matrix<T>& A, const size_t b) {
 
 		span_set_product_inverseL_by_self(
 			A_22_32,
-			b, 0,
+			0, 0,
 			b, b,
 			A_23,
 			0, 0,
@@ -158,6 +158,17 @@ void LU_seq_block(Matrix<T>& A, const size_t b) {
 			i + b, i + b
 		);
 
+		/*span_substract_product(
+			A_22_32,
+			b, 0,
+			N - b - i, b,
+			A_23,
+			0, 0,
+			b, N - b - i,
+			A,
+			i + b, i + b
+		);*/
+
 		/// Regular version
 		/*span_substract_product(
 			A,
@@ -171,8 +182,6 @@ void LU_seq_block(Matrix<T>& A, const size_t b) {
 			i + b
 		);*/
 	}
-
-	auto t = 5;
 }
 
 // Splits LU saved as a single matrix into separate objects
@@ -192,4 +201,21 @@ void split_into_LU(const Matrix<T>& A, Matrix<T>& L, Matrix<T>& U) {
 		for (size_t j = 0; j < i; ++j) U(i, j) = 0;
 		for (size_t j = i; j < A.cols(); ++j) U(i, j) = A(i, j);
 	}
+}
+
+template <typename T>
+Matrix<T> product_LU(const Matrix<T>& A) {
+	Matrix<T> res(A);
+
+	for (size_t i = 1; i < A.rows(); ++i)
+		for (size_t j = 0; j < A.cols(); ++j) {
+			res(i, j) = 0;
+			for (size_t k = 0; k <= std::min(j, i); ++k) {
+				if (k == j)
+					res(i, j) += A(k, k);
+				else
+					res(i, j) += A(i, k) * A(k, j);
+			}
+		}
+	return(res);
 }

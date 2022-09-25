@@ -3,22 +3,11 @@
 #include "LU_seq.hpp"
 #include "static_timer.hpp"
 
-void cpp_standart()
-{
-	if (_MSVC_LANG == 201703L) std::cout << "C++17\n";
-	else if (_MSVC_LANG == 201402L) std::cout << "C++14\n";
-	else if (_MSVC_LANG == 201103L) std::cout << "C++11\n";
-	else if (_MSVC_LANG == 199711L) std::cout << "C++98\n";
-	else std::cout << "pre-standard C++\n\n";
-}
-
 
 int main(int argc, char *argv[]) {
-	cpp_standart();
-
 	const size_t ROWS = 256;
 	const size_t COLS = 256;
-	const size_t BLOCK_SIZE = 8;
+	const size_t BLOCK_SIZE = 16;
 
 	// Create random matrix
 	const auto INITIAL_MATRIX = DMatrix(ROWS, COLS).randomize();
@@ -67,9 +56,10 @@ int main(int argc, char *argv[]) {
 
 		// Display
 		split_into_LU(A, L, U);
-		/*std::cout
+		std::cout
 			<< "A = " << A << "\n\n"
-			<< "max_norm(L * U - INITIAL_MATRIX) = " << (L * U - INITIAL_MATRIX).max_elem() << "\n\n";*/
+			<< "max_norm(L * U - INITIAL_MATRIX) = " << (L * U - INITIAL_MATRIX).max_elem() << "\n\n"
+			<< "max_norm(L * U - INITIAL_MATRIX) = " << (product_LU(A) - INITIAL_MATRIX).max_elem() << "\n\n";
 	}
 	else {
 		std::cout << ">>> ROWS != COLS, Block LU decomposition supressed.\n\n";
