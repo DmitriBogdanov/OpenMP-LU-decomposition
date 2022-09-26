@@ -9,14 +9,19 @@ Note that present implementations are intended for academic purposes, as such th
 
 ## Compilation
 
-* Recommended compiler: -TODO-
+* Recommended compiler: Intel C++ Compiler
 * Requires C++17 support
 
 ## Usage
 
--TODO-
+Adjust ROWS, COLS and BLOCK_SIZE to configure testing parameters. Block decomposition assumes square matrix with size being a multiple of BLOCK_SIZE.
 
 ## Version history
+* 00.08
+    * Reimplemented LU decomposition and corresponding span methods using C-style arrays and pointer arithmetic
+    * Optimized cache use in BLAS3 method
+    * Added optimized method for verifying decomposition corectness
+
 * 00.07
     * Fixed incorrect LU split for rectangular matrices with more rows
 

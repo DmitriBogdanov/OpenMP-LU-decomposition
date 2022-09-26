@@ -32,6 +32,7 @@ struct Matrix {
 	// Getters
 	size_t rows() const { return _rows; }
 	size_t cols() const { return _cols; }
+	T* data() { return &(_data[0]); }
 
 	//Standart matrix multiplication
 	Matrix<T> operator*(const Matrix<T> &other) {
