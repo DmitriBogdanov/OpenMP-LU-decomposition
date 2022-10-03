@@ -1,8 +1,10 @@
 #pragma once
 
+#include <omp.h>
+
 
 template<typename T>
-inline void span_copy_rm_to_rm(
+inline void parspan_copy_rm_to_rm(
 	const T *src, size_t src_rows, size_t src_cols,
 	size_t src_span_i, size_t src_span_j, size_t src_span_rows, size_t src_span_cols,
 	T *dst, size_t dst_rows, size_t dst_cols,
@@ -15,7 +17,7 @@ inline void span_copy_rm_to_rm(
 
 
 template<typename T>
-inline void span_copy_rm_to_cm(
+inline void parspan_copy_rm_to_cm(
 	const T *src, size_t src_rows, size_t src_cols,
 	size_t src_span_i, size_t src_span_j, size_t src_span_rows, size_t src_span_cols,
 	T *dst, size_t dst_rows, size_t dst_cols,
@@ -28,7 +30,7 @@ inline void span_copy_rm_to_cm(
 
 
 template<typename T>
-inline void span_copy_cm_to_rm(
+inline void parspan_copy_cm_to_rm(
 	const T *src, size_t src_rows, size_t src_cols,
 	size_t src_span_i, size_t src_span_j, size_t src_span_rows, size_t src_span_cols,
 	T *dst, size_t dst_rows, size_t dst_cols,
@@ -41,7 +43,7 @@ inline void span_copy_cm_to_rm(
 
 
 template<typename T>
-inline void block_get_U23(
+inline void parblock_get_U23(
 	const T *src1, size_t src1_rows, size_t src1_cols,
 	T *src2, size_t src2_rows, size_t src2_cols) {
 
@@ -56,7 +58,7 @@ inline void block_get_U23(
 
 
 template <typename T>
-inline void block_substract_product(
+inline void parblock_substract_product(
 	T const *src1, size_t src1_rows, size_t src1_cols,
 	T const *src2, size_t src2_rows, size_t src2_cols,
 	T *dst, size_t dst_rows, size_t dst_cols,
@@ -70,15 +72,15 @@ inline void block_substract_product(
 	size_t shift_src2;
 	size_t shift_dst;
 
-	for (size_t i = 0; i < src1_rows; ++i) {
+	for (int i = 0; i < src1_rows; ++i) {
 		shift_dst = (dst_i + i) * dst_cols + dst_j;
 		shift_src1 = i * src1_cols;
 
-		for (size_t j = 0; j < src2_cols; ++j) {
+		for (int j = 0; j < src2_cols; ++j) {
 			shift_src2 = j * src2_rows;
 
 			temp = T(0);
-			for (size_t k = 0; k < src1_cols; ++k) temp += src1[shift_src1 + k] * src2[shift_src2 + k];
+			for (int k = 0; k < src1_cols; ++k) temp += src1[shift_src1 + k] * src2[shift_src2 + k];
 			dst[shift_dst + j] -= temp;
 		}
 	}

@@ -17,6 +17,11 @@ Note that present implementations are intended for academic purposes, as such th
 Adjust ROWS, COLS and BLOCK_SIZE to configure testing parameters. Block decomposition assumes square matrix with size being a multiple of BLOCK_SIZE.
 
 ## Version history
+* 00.09
+    * Changed output style to a table
+    * Implemented parallel LU using OpenMP
+    * Optimized verify_LU() to avoid allocations
+
 * 00.08
     * Reimplemented LU decomposition and corresponding span methods using C-style arrays and pointer arithmetic
     * Optimized cache use in BLAS3 method

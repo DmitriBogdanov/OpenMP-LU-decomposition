@@ -85,16 +85,13 @@ struct Matrix {
 		return res;
 	}
 
-	
-
-	std::vector<T> _data;
-		// direct access for your dirty little needs, use with caution
-
 private:
 	size_t _rows;
 	size_t _cols;
 
-	
+public:
+	std::vector<T> _data;
+	// direct access for your dirty little needs, use with caution
 };
 
 using LMatrix = Matrix<long double>;
@@ -124,4 +121,22 @@ std::ostream& operator<<(std::ostream &stream, const Matrix<T> &matrix) {
 	}
 
 	return stream;
+}
+
+
+template <typename T>
+T verify_LU(const Matrix<T> &A, const Matrix<T> &initial_matrix) {
+	T err = 0;
+
+	for (size_t i = 0; i < A.rows(); ++i)
+		for (size_t j = 0; j < A.cols(); ++j) {
+			T difference = initial_matrix(i, j);
+
+			for (size_t k = 0; k <= std::min(j, i); ++k)
+				difference -= (k == i) ? A(i, j) : A(i, k) * A(k, j);
+
+			err = std::max(err, fabs(difference));
+		}
+
+	return err;
 }

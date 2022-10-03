@@ -1,35 +1,36 @@
 #pragma once
 
-#include "matric_span.hpp"
+#include "matric_parspan.hpp"
 
 
-// # LU #
+// # Parallel LU #
 // - Sequential
 // - No pivoting
 // - Time complexity O(2/3 N^3)
 template <typename T>
-void LU_seq(T *A, const size_t ROWS, const size_t COLS) {
-	for (size_t i = 0; i < std::min(ROWS - 1, COLS); ++i) {
+void LU_par(T *A, const size_t ROWS, const size_t COLS) {
+	for (int i = 0; i < std::min(ROWS - 1, COLS); ++i) {
 		// (1)
 		const T inverseAii = T(1) / A[i * COLS + i];
 
-		for (size_t j = i + 1; j < ROWS; ++j)
+		for (int j = i + 1; j < ROWS; ++j)
 			A[j * COLS + i] *= inverseAii;
 
 		// (2)
-		for (size_t j = i + 1; j < ROWS; ++j)
-			for (size_t k = i + 1; k < COLS; ++k)
+#pragma omp parallel for
+		for (int j = i + 1; j < ROWS; ++j)
+			for (int k = i + 1; k < COLS; ++k)
 				A[j * COLS + k] -= A[j * COLS + i] * A[i * COLS + k];
 	}
 }
 
 
-// # Block LU #
+// # Parallel Block LU #
 // - Sequential
 // - No pivoting
 // - Time complexity O(?)
 template <typename T>
-void LU_seq_block(T *A, const size_t N, const size_t b) {
+void LU_par_block(T *A, const size_t N, const size_t b) {
 	const size_t total_length = N * b + b * (N - b);
 
 	T* const buffer = new T[total_length * sizeof(T)];
