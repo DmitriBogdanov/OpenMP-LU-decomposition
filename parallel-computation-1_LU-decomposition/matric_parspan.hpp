@@ -59,19 +59,20 @@ inline void parblock_get_U23(
 
 template <typename T>
 inline void parblock_substract_product(
-	T const *src1, size_t src1_rows, size_t src1_cols,
-	T const *src2, size_t src2_rows, size_t src2_cols,
-	T *dst, size_t dst_rows, size_t dst_cols,
-	size_t dst_i, size_t dst_j) {
+	T const *src1, int src1_rows, int src1_cols,
+	T const *src2, int src2_rows, int src2_cols,
+	T *dst, int dst_rows, int dst_cols,
+	int dst_i, int dst_j) {
 
 	// NOTE: src2 is assumed to be col-major
 	// (aka transposed matrix used in multiplication)
 	T temp;
 
-	size_t shift_src1;
-	size_t shift_src2;
-	size_t shift_dst;
+	int shift_src1;
+	int shift_src2;
+	int shift_dst;
 
+	#pragma omp parallel for schedule(static)
 	for (int i = 0; i < src1_rows; ++i) {
 		shift_dst = (dst_i + i) * dst_cols + dst_j;
 		shift_src1 = i * src1_cols;
@@ -83,5 +84,5 @@ inline void parblock_substract_product(
 			for (int k = 0; k < src1_cols; ++k) temp += src1[shift_src1 + k] * src2[shift_src2 + k];
 			dst[shift_dst + j] -= temp;
 		}
-	}
+	}	
 }

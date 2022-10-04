@@ -8,6 +8,7 @@ inline void span_copy_rm_to_rm(
 	T *dst, size_t dst_rows, size_t dst_cols,
 	size_t dst_span_i, size_t dst_span_j) {
 
+#pragma omp parallel for
 	for (size_t i = 0; i < src_span_rows; ++i)
 		for (size_t j = 0; j < src_span_cols; ++j)
 			dst[(dst_span_i + i) * dst_cols + dst_span_j + j] = src[(src_span_i + i) * src_cols + src_span_j + j];

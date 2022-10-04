@@ -17,6 +17,10 @@ Note that present implementations are intended for academic purposes, as such th
 Adjust ROWS, COLS and BLOCK_SIZE to configure testing parameters. Block decomposition assumes square matrix with size being a multiple of BLOCK_SIZE.
 
 ## Version history
+* 00.10
+    * Added date of the computation to output
+    * Implemented parallel block BU
+
 * 00.09
     * Changed output style to a table
     * Implemented parallel LU using OpenMP

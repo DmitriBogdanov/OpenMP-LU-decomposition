@@ -1,14 +1,14 @@
 #pragma once
 
 #include "matric_parspan.hpp"
-
+#include "LU_seq.hpp"
 
 // # Parallel LU #
 // - Sequential
 // - No pivoting
 // - Time complexity O(2/3 N^3)
 template <typename T>
-void LU_par(T *A, const size_t ROWS, const size_t COLS) {
+void LU_par(T *A, const int ROWS, const int COLS) {
 	for (int i = 0; i < std::min(ROWS - 1, COLS); ++i) {
 		// (1)
 		const T inverseAii = T(1) / A[i * COLS + i];
@@ -17,7 +17,7 @@ void LU_par(T *A, const size_t ROWS, const size_t COLS) {
 			A[j * COLS + i] *= inverseAii;
 
 		// (2)
-#pragma omp parallel for
+		#pragma omp parallel for schedule(static)
 		for (int j = i + 1; j < ROWS; ++j)
 			for (int k = i + 1; k < COLS; ++k)
 				A[j * COLS + k] -= A[j * COLS + i] * A[i * COLS + k];
@@ -56,7 +56,7 @@ void LU_par_block(T *A, const size_t N, const size_t b) {
 
 		// (1)
 		// Find LU decomposition of block (A22 & A32)
-		span_copy_rm_to_rm(
+		parspan_copy_rm_to_rm(
 			// source
 			A, N, N,
 			i, i,
@@ -67,10 +67,11 @@ void LU_par_block(T *A, const size_t N, const size_t b) {
 		);
 
 		LU_seq(A_22, rows_22 + rows_32, cols_22);
-
+			// for any sensible block size A_22 & A_32 is too small to
+			// warrant parallelization
 		
 
-		span_copy_rm_to_rm(
+		parspan_copy_rm_to_rm(
 			// source
 			A_22, rows_22 + rows_32, cols_22,
 			0, 0,
@@ -83,7 +84,7 @@ void LU_par_block(T *A, const size_t N, const size_t b) {
 		// (2)
 		// Solve (N - b - i) systems L22 * x = A23
 		// to get A23 = L22^-1 * A23
-		span_copy_rm_to_cm(
+		parspan_copy_rm_to_cm(
 			// source
 			A, N, N,
 			i, i + b,
@@ -93,12 +94,12 @@ void LU_par_block(T *A, const size_t N, const size_t b) {
 			0, 0
 		);
 
-		block_get_U23(
+		parblock_get_U23(
 			A_22, rows_22, cols_22,
 			A_23, rows_23, cols_23
 		);
 
-		span_copy_cm_to_rm(
+		parspan_copy_cm_to_rm(
 			// source
 			A_23, rows_23, cols_23,
 			0, 0,
@@ -110,7 +111,7 @@ void LU_par_block(T *A, const size_t N, const size_t b) {
 
 		// (3)
 		// A33 -= A32 * A23
-		block_substract_product(
+		parblock_substract_product(
 			// source 1
 			A_32, rows_32, cols_32,
 			// source 2

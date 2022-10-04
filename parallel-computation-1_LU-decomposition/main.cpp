@@ -9,17 +9,25 @@
 
 
 int main(int argc, char *argv[]) {
-	const size_t ROWS = 1024;
-	const size_t COLS = 1024;
+	// Config
+	const size_t ROWS = 1024 * 2;
+	const size_t COLS = 1024 * 2;
 	const size_t BLOCK_SIZE = 32;
+	const int THREADS = 4;
 
+	// Consts
 	const size_t MAX_SIZE = std::max(ROWS, COLS);
 	const size_t SKIP_VERIFICATION_AFTER_SIZE = 1100;
+
+	// Set up OpenMP
+	const int MAX_THREADS = omp_get_max_threads();
+	omp_set_num_threads(std::min(THREADS, MAX_THREADS));
 
 	// Create random matrix
 	const auto INITIAL_MATRIX = DMatrix(ROWS, COLS).randomize();
 
 	std::cout
+		<< get_date_string() << "\n"
 		<< "MATRIX_DIMENSIONS = (" << ROWS << ", " << COLS << ")\n"
 		<< "BLOCK_SIZE = " << BLOCK_SIZE << "\n\n"
 		<< "INITIAL_MATRIX = " << INITIAL_MATRIX << "\n\n";
