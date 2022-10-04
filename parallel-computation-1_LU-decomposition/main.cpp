@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
 	const size_t ROWS = 1024 * 2;
 	const size_t COLS = 1024 * 2;
 	const size_t BLOCK_SIZE = 32;
-	const int THREADS = 4;
+	const int THREADS = 8;
 
 	// Consts
 	const size_t MAX_SIZE = std::max(ROWS, COLS);
@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
 		<< get_date_string() << "\n"
 		<< "MATRIX_DIMENSIONS = (" << ROWS << ", " << COLS << ")\n"
 		<< "BLOCK_SIZE = " << BLOCK_SIZE << "\n\n"
-		<< "INITIAL_MATRIX = " << INITIAL_MATRIX << "\n\n";
+		<< "Using " << THREADS << " threads out of " << MAX_THREADS << "\n\n";
 
 	double defaultTime = 0;
 	double currentTime = 0;
