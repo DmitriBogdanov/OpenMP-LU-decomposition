@@ -9,11 +9,33 @@
 template <typename T>
 struct Matrix {
 	// Zero-initialize
-	Matrix(size_t rows, size_t cols, T var = static_cast<T>(0)) : _rows(rows), _cols(cols), _data(rows * cols, var) {}
-	Matrix(size_t size, T var = static_cast<T>(0)) : _rows(size), _cols(size), _data(size * size, var) {}
+	Matrix(size_t rows, size_t cols, T var = static_cast<T>(0)) : _rows(rows), _cols(cols) 
+	{
+		_data.resize(_rows);
+		for (size_t i = 0; i < _rows; ++i)
+		{
+			_data[i].reserve(_cols);
+			for (size_t j = 0; j < _cols; ++j)
+			{
+				_data[i].push_back(var);
+			}
+		}
+	}
+	Matrix(size_t size, T var = static_cast<T>(0)) : _rows(size), _cols(size)
+	{
+		_data.resize(_rows);
+		for (size_t i = 0; i < _rows; ++i)
+		{
+			_data[i].reserve(_cols);
+			for (size_t j = 0; j < _cols; ++j)
+			{
+				_data[i].push_back(var);
+			}
+		}
+	}
 
 	// Initialize from data
-	Matrix(size_t rows, size_t cols, T *data) : _rows(rows), _cols(cols), _data(data, data + rows * cols) {}
+	Matrix(size_t rows, size_t cols, T* data) : _rows(rows), _cols(cols), _data(data, data + rows * cols) {}
 	Matrix(size_t size, T *data) : _rows(size), _cols(size), _data(data, data + size * size) {}
 		// Note the use of two iterator constructor 'vector(ptr, ptr + len)'
 
@@ -22,12 +44,12 @@ struct Matrix {
 	Matrix(Matrix<every_type> matrix) : _rows(matrix.rows()), _cols(matrix.cols()), _data(*matrix._data) {}
 
 	// 2D indexation
-	inline T& operator()(size_t i, size_t j) { return _data[i * _cols + j]; }
-	inline const T& operator()(size_t i, size_t j) const { return _data[i * _cols + j]; }
+	inline T& operator()(size_t i, size_t j) { return _data[i][j]; }
+	inline const T& operator()(size_t i, size_t j) const { return _data[i][j]; }
 
 	// 1D indexation
-	T& operator[](size_t index) { return _data[index]; }
-	const T& operator[](size_t index) const { return _data[index]; }
+	//T& operator[](size_t index) { return _data[index]; }
+	//const T& operator[](size_t index) const { return _data[index]; }
 
 	// Getters
 	size_t rows() const { return _rows; }
@@ -60,7 +82,9 @@ struct Matrix {
 
 	// Utils
 	Matrix<T>& randomize(T min = 0, T max = 100) {
-		for (auto &elem : _data) elem = static_cast<T>(min + (max - min) * rand() / (RAND_MAX + 1.));
+		for (size_t i = 0; i < _rows; ++i)
+			for (size_t j = 0; j < _cols; ++j)
+				_data[i][j] = static_cast<T>(min + (max - min) * rand() / (RAND_MAX + 1.));
 			// generate random double in [min, max] range and cast to 'T'
 
 		for (size_t k = 0; k < std::min(_rows, _cols); ++k) this->operator()(k, k) *= 5;
@@ -72,21 +96,24 @@ struct Matrix {
 	void downsize(size_t newRows, size_t newCols) {
 		_rows = newRows;
 		_cols = newCols;
-		_data.resize(_rows * _cols);
+		_data.resize(_rows);
+		for (size_t i = 0; i < _rows; ++i)
+			_data[i].resize(_cols);
 	}
 
 	T max_elem() const {
 		T res = 0;
 
-		for (const auto &el : _data)
-			if (res < abs(el)) res = abs(el);
+		for (size_t i = 0; i < _rows; ++i)
+			for (size_t j = 0; j < _cols; ++j)
+				if (res < fabs(_data[i][j])) res = abs(_data[i][j]);
 
 		return res;
 	}
 
 	
 
-	std::vector<T> _data;
+	std::vector<std::vector<T>> _data;
 		// direct access for your dirty little needs, use with caution
 
 private:

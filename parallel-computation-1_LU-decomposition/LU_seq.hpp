@@ -39,8 +39,6 @@ void LU_seq_block(Matrix<T>& A, const size_t b) {
 	Matrix<T> A_23(b, N - b);
 	Matrix<T> A_22_32(N, b);
 
-	Matrix<T> A_33(N - b, N - b);
-
 	for (size_t i = 0; i < N; i += b) {
 		// (1)
 		// Find LU decomposition of block (A22 & A32)
@@ -48,139 +46,32 @@ void LU_seq_block(Matrix<T>& A, const size_t b) {
 		const size_t cols1 = b;
 
 		A_22_32.downsize(N - i, b);
+		span_copy(A,       i, i, rows1, cols1, 
+			      A_22_32, 0, 0);
 
-		span_copy(
-			A,
-			i, i,
-			rows1, cols1,
-			A_22_32,
-			0, 0
-		);
+		span_LU_decomposition(A_22_32, 0, 0, rows1, cols1);
 
-		span_LU_decomposition(
-			A_22_32,
-			0, 0,
-			rows1, cols1
-		);
+		span_copy(A_22_32, 0, 0, rows1, cols1,
+			      A,       i, i);
 
-		span_copy(
-			A_22_32,
-			0, 0,
-			rows1, cols1,
-			A,
-			i, i
-		);
-
-		/// Regular version
-		/*span_LU_decomposition(
-			A,
-			i, i,
-			N - i, b
-		);*/
+		if (!(i < N - b)) break;
 
 		// (2)
 		// Solve systems L22 * U23 = A23
 		// to get U23 = L22^-1 * A23
 		A_23.downsize(b, N - b - i);
+		span_copy(A,    i, i + b, b, N - b - i,
+			      A_23, 0, 0);
 
-		span_copy(
-			A,
-			i, i + b,
-			b, N - b - i,
-			A_23,
-			0, 0
-		);
+		span_set_product_inverseL_by_self(A_22_32, 0, 0, b, b,
+										  A_23,    0, 0, b, N - b - i);
 
-		span_set_product_inverseL_by_self(
-			A_22_32,
-			0, 0,
-			b, b,
-			A_23,
-			0, 0,
-			b, N - b - i
-		);
-
-		span_copy(
-			A_23,
-			0, 0,
-			b, N - b - i,
-			A,
-			i, i + b
-		);
-
-		/// Regular version
-		/*span_set_product_inverseL_by_self(
-			A,
-			i, i,
-			b, b,
-			A,
-			i, i + b,
-			b, N - b - i
-		);*/
-	
+		span_copy(A_23, 0, 0, b, N - b - i, A, i, i + b);
 		
 		// (3)
-		// A33 -= A32 * A23
-		/*span_copy_same_cols(
-			A_22_32,
-			0, 0,
-			N - b - i, b,
-			A_32,
-			0, 0
-		);*/
-
-		A_33.downsize(N - b - i, N - b - i);
-
-		span_copy(
-			A,
-			i + b, i + b,
-			N - b - i, N - b - i,
-			A_33,
-			0, 0
-		);
-
-		span_substract_product(
-			A_22_32,
-			b, 0,
-			N - b - i, b,
-			A_23,
-			0, 0,
-			b, N - b - i,
-			A_33,
-			0, 0
-		);
-
-		span_copy(
-			A_33,
-			0, 0,
-			N - b - i, N - b - i,
-			A,
-			i + b, i + b
-		);
-
-		/*span_substract_product(
-			A_22_32,
-			b, 0,
-			N - b - i, b,
-			A_23,
-			0, 0,
-			b, N - b - i,
-			A,
-			i + b, i + b
-		);*/
-
-		/// Regular version
-		/*span_substract_product(
-			A,
-			i + b, i,
-			N - b - i, b,
-			A,
-			i, i + b,
-			b, N - b - i,
-			A,
-			i + b,
-			i + b
-		);*/
+		span_substract_product(A_22_32, b,     0,    N - b - i, b,
+							   A_23,    0,     0,    b,         N - b - i, 
+			                   A,       i + b, i + b);
 	}
 }
 
@@ -208,14 +99,11 @@ Matrix<T> product_LU(const Matrix<T>& A) {
 	Matrix<T> res(A);
 
 	for (size_t i = 1; i < A.rows(); ++i)
-		for (size_t j = 0; j < A.cols(); ++j) {
+		for (size_t j = 0; j < A.cols(); ++j) 
+		{
 			res(i, j) = 0;
-			for (size_t k = 0; k <= std::min(j, i); ++k) {
-				if (k == j)
-					res(i, j) += A(k, k);
-				else
-					res(i, j) += A(i, k) * A(k, j);
-			}
+			for (size_t k = 0; k <= std::min(j, i); ++k)
+				res(i, j) += k == i ? A(i, j) : A(i, k) * A(k, j);
 		}
 	return(res);
 }
