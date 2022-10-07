@@ -123,6 +123,11 @@ std::ostream& operator<<(std::ostream &stream, const Matrix<T> &matrix) {
 	return stream;
 }
 
+template<typename T>
+T abs(T value) {
+	return value >= 0 ? value : -value;
+}
+
 
 template <typename T>
 T verify_LU(const Matrix<T> &A, const Matrix<T> &initial_matrix) {

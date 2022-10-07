@@ -10,10 +10,10 @@
 
 int main(int argc, char *argv[]) {
 	// Config
-	const size_t ROWS = 1024 * 2;
-	const size_t COLS = 1024 * 2;
+	const size_t ROWS = 1024 * 4;
+	const size_t COLS = 1024 * 4;
 	const size_t BLOCK_SIZE = 32;
-	const int THREADS = 8;
+	const int THREADS = 80; // upper bound
 
 	// Consts
 	const size_t MAX_SIZE = std::max(ROWS, COLS);
@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
 	const auto INITIAL_MATRIX = DMatrix(ROWS, COLS).randomize();
 
 	std::cout
-		<< get_date_string() << "\n"
+		///<< get_date_string() << "\n"
 		<< "MATRIX_DIMENSIONS = (" << ROWS << ", " << COLS << ")\n"
 		<< "BLOCK_SIZE = " << BLOCK_SIZE << "\n\n"
 		<< "Using " << std::min(THREADS, MAX_THREADS) << " threads out of " << MAX_THREADS << "\n\n";

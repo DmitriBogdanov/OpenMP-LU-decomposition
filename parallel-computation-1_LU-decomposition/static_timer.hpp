@@ -27,7 +27,7 @@ private:
 		// 'inline static' requires C++17
 };
 
-
+/*
 std::string get_date_string() {
 	auto start = std::chrono::system_clock::now();
 	auto legacyStart = std::chrono::system_clock::to_time_t(start);
@@ -36,3 +36,4 @@ std::string get_date_string() {
 
 	return std::string(tmBuff);
 }
+*/
