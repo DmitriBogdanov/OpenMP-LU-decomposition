@@ -3,8 +3,8 @@
 #include "matric_parspan.hpp"
 #include "LU_seq.hpp"
 
+
 // # Parallel LU #
-// - Sequential
 // - No pivoting
 // - Time complexity O(2/3 N^3)
 template <typename T>
@@ -26,7 +26,6 @@ void LU_par(T *A, const int ROWS, const int COLS) {
 
 
 // # Parallel Block LU #
-// - Sequential
 // - No pivoting
 // - Time complexity O(?)
 template <typename T>

@@ -4,7 +4,6 @@
 
 
 // # LU #
-// - Sequential
 // - No pivoting
 // - Time complexity O(2/3 N^3)
 template <typename T>
@@ -25,7 +24,6 @@ void LU_seq(T *A, const size_t ROWS, const size_t COLS) {
 
 
 // # Block LU #
-// - Sequential
 // - No pivoting
 // - Time complexity O(?)
 template <typename T>
@@ -66,8 +64,6 @@ void LU_seq_block(T *A, const size_t N, const size_t b) {
 		);
 
 		LU_seq(A_22, rows_22 + rows_32, cols_22);
-
-		
 
 		span_copy_rm_to_rm(
 			// source

@@ -21,6 +21,7 @@ int main(int argc, char *argv[]) {
 
 	// Set up OpenMP
 	const int MAX_THREADS = omp_get_max_threads();
+
 	omp_set_num_threads(std::min(THREADS, MAX_THREADS));
 
 	// Create random matrix
@@ -30,7 +31,7 @@ int main(int argc, char *argv[]) {
 		<< get_date_string() << "\n"
 		<< "MATRIX_DIMENSIONS = (" << ROWS << ", " << COLS << ")\n"
 		<< "BLOCK_SIZE = " << BLOCK_SIZE << "\n\n"
-		<< "Using " << THREADS << " threads out of " << MAX_THREADS << "\n\n";
+		<< "Using " << std::min(THREADS, MAX_THREADS) << " threads out of " << MAX_THREADS << "\n\n";
 
 	double defaultTime = 0;
 	double currentTime = 0;
