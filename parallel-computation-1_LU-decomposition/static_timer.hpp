@@ -28,6 +28,7 @@ private:
 };
 
 /*
+// Windows specific call, uncomment if needed
 std::string get_date_string() {
 	auto start = std::chrono::system_clock::now();
 	auto legacyStart = std::chrono::system_clock::to_time_t(start);

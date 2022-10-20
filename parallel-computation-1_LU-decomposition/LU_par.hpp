@@ -17,7 +17,7 @@ void LU_par(T *A, const int ROWS, const int COLS) {
 			A[j * COLS + i] *= inverseAii;
 
 		// (2)
-		#pragma omp parallel for schedule(static)
+		#pragma omp parallel for schedule(static) firstprivate(A, i, ROWS, COLS)
 		for (int j = i + 1; j < ROWS; ++j)
 			for (int k = i + 1; k < COLS; ++k)
 				A[j * COLS + k] -= A[j * COLS + i] * A[i * COLS + k];
@@ -69,7 +69,6 @@ void LU_par_block(T *A, const size_t N, const size_t b) {
 			// for any sensible block size A_22 & A_32 is too small to
 			// warrant parallelization
 		
-
 		parspan_copy_rm_to_rm(
 			// source
 			A_22, rows_22 + rows_32, cols_22,

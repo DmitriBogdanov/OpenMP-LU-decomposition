@@ -47,7 +47,6 @@ inline void block_get_U23(
 
 	// Not using 'span' here since we operate with blocks that start at (0, 0)
 	// NOTE: src2 is assumed to be col-major
-
 	for (size_t j = 0; j < src2_cols; ++j)
 		for (size_t i = 0; i < src2_rows; ++i)
 			for (int k = i - 1; k >= 0; --k)

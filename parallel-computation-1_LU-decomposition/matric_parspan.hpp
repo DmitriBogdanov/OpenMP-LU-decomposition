@@ -49,7 +49,7 @@ inline void parblock_get_U23(
 
 	// Not using 'span' here since we operate with blocks that start at (0, 0)
 	// NOTE: src2 is assumed to be col-major
-	#pragma omp parallel for schedule(static)
+	#pragma omp parallel for schedule(static) firstprivate(src1, src1_rows, src1_cols, src2, src2_rows, src2_cols)
 	for (int j = 0; j < src2_cols; ++j)
 		for (int i = 0; i < src2_rows; ++i)
 			for (int k = i - 1; k >= 0; --k)
@@ -73,7 +73,7 @@ inline void parblock_substract_product(
 	int shift_src2;
 	int shift_dst;
 
-	#pragma omp parallel for schedule(static)
+	#pragma omp parallel for schedule(static) firstprivate(src1, src2, dst, temp, shift_src1, shift_src2, shift_dst, src1_rows, src1_cols, src2_rows, src2_cols, dst_i, dst_j)
 	for (int i = 0; i < src1_rows; ++i) {
 		shift_dst = (dst_i + i) * dst_cols + dst_j;
 		shift_src1 = i * src1_cols;
@@ -85,5 +85,5 @@ inline void parblock_substract_product(
 			for (int k = 0; k < src1_cols; ++k) temp += src1[shift_src1 + k] * src2[shift_src2 + k];
 			dst[shift_dst + j] -= temp;
 		}
-	}	
+	}
 }
