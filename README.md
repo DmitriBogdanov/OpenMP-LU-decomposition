@@ -11,15 +11,20 @@ Note that present implementations are intended for academic purposes, as such th
 
 * Recommended compiler: Intel C++ Compiler
 * Requires C++17 support
+* Parallelization requires OpenMP support
 
 ## Usage
 
-Adjust ROWS, COLS and BLOCK_SIZE to configure testing parameters. Block decomposition assumes square matrix with size being a multiple of BLOCK_SIZE.
+Adjust in ROWS, COLS and BLOCK_SIZE in "main.cpp" to configure testing parameters. Block decomposition assumes square matrix with size being a multiple of BLOCK_SIZE.
 
 ## Version history
+* 00.11
+    * Removed Windows-specific calls to allow compilation on Linux clusters
+    * Optimized  parallel block LU
+
 * 00.10
     * Added date of the computation to output
-    * Implemented parallel block BU
+    * Implemented parallel block LU
 
 * 00.09
     * Changed output style to a table
