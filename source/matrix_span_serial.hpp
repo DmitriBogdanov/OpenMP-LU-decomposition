@@ -41,7 +41,7 @@ inline void span_copy_cm_to_rm(
 
 
 template<typename T>
-inline void block_get_U23(
+inline void span_get_U23(
 	const T *src1, size_t src1_rows, size_t src1_cols,
 	T *src2, size_t src2_rows, size_t src2_cols) {
 
@@ -55,7 +55,7 @@ inline void block_get_U23(
 
 
 template <typename T>
-inline void block_substract_product(
+inline void span_substract_product(
 	T const *src1, size_t src1_rows, size_t src1_cols,
 	T const *src2, size_t src2_rows, size_t src2_cols,
 	T *dst, size_t dst_rows, size_t dst_cols,

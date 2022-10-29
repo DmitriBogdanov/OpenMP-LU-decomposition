@@ -1,9 +1,9 @@
-# Parallel Computation / LU Decomposition
+# OpenMP LU Decomposition
 
-Contains sequential and parallelized implementations of following algorithms:
+Contains serial and parallel (OpenMP) implementations of following algorithms:
 
 * LU decomposition
-* Block LU decomposition
+* Blocked LU decomposition
 
 Note that present implementations are intended for academic purposes, as such they are not meant to be used in any sort of high-performance production code.
 
@@ -11,13 +11,19 @@ Note that present implementations are intended for academic purposes, as such th
 
 * Recommended compiler: Intel C++ Compiler
 * Requires C++17 support
-* Parallelization requires OpenMP support
+* Requires OpenMP support
 
 ## Usage
 
 Adjust in ROWS, COLS and BLOCK_SIZE in "main.cpp" to configure testing parameters. Block decomposition assumes square matrix with size being a multiple of BLOCK_SIZE.
 
 ## Version history
+
+* 01.01
+    * Code cleanup and renames across the board
+    * Fixed typos in names, comments and docs
+    * Added multiple comments with full method descriptions and notes about technical implementation
+
 * 00.11
     * Removed Windows-specific calls to allow compilation on Linux clusters
     * Optimized  parallel block LU
@@ -33,30 +39,30 @@ Adjust in ROWS, COLS and BLOCK_SIZE in "main.cpp" to configure testing parameter
 
 * 00.08
     * Reimplemented LU decomposition and corresponding span methods using C-style arrays and pointer arithmetic
-    * Optimized cache use in BLAS3 method
+    * Optimized cache use in blocked method
     * Added optimized method for verifying decomposition corectness
 
 * 00.07
     * Fixed incorrect LU split for rectangular matrices with more rows
 
 * 00.06
-    * Implemented BLAS3 LU factorization
+    * Implemented functional blocked LU factorization
 
 * 00.05
-    * Bugfixes in BLAS3 decomposition, narrowed down issues to step (3)
+    * Bugfixes in blocked decomposition, narrowed down issues to step (3)
 
 * 00.04
-    * Refactored BLAS2 LU decomposition
+    * Refactored LU decomposition
     * Implemented operations for matrix spans
-    * Partially implemented LU decomposition BLAS3 for blocks of set size (b = 2)
+    * Partially implemented LU decomposition for blocks of set size (b = 2)
     * General refactors
 
 * 00.03
-    * Implemented sequential LU decomposition BLAS2 in place
+    * Implemented serial LU decomposition in place
 
 * 00.02
     * Created suitable matrix implementation
-    * Implemented sequential LU decomposition BLAS2
+    * Implemented sequential LU decomposition
 
 * 00.01
     * Implemented thread safe timing

@@ -43,7 +43,7 @@ inline void parspan_copy_cm_to_rm(
 
 
 template<typename T>
-inline void parblock_get_U23(
+inline void parspan_get_U23(
 	const T *src1, size_t src1_rows, size_t src1_cols,
 	T *src2, size_t src2_rows, size_t src2_cols) {
 
@@ -54,12 +54,12 @@ inline void parblock_get_U23(
 		for (int i = 0; i < src2_rows; ++i)
 			for (int k = i - 1; k >= 0; --k)
 				src2[j * src2_rows + i] -= src2[j * src2_rows + k] * src1[i * src1_cols + k];
-		// Effect of parallelization isn't very noticable here but seems to be positive for large sizes
+				// Effect of parallelization isn't very noticable here but seems to be positive for large sizes
 }
 
 
 template <typename T>
-inline void parblock_substract_product(
+inline void parspan_substract_product(
 	T const *src1, int src1_rows, int src1_cols,
 	T const *src2, int src2_rows, int src2_cols,
 	T *dst, int dst_rows, int dst_cols,
