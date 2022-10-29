@@ -44,6 +44,7 @@
 //
 // NOTE: This implementation does decomposition in-place, since 'L' is guaranteed to have
 // ones on the diagonal we can store all meaningfull elements of 'L' and 'U' inside one matrix
+//
 template <typename T>
 void LU_serial(T *A, const size_t ROWS, const size_t COLS) {
 	for (size_t i = 0; i < std::min(ROWS - 1, COLS); ++i) {
@@ -136,6 +137,7 @@ void LU_serial(T *A, const size_t ROWS, const size_t COLS) {
 // NOTE: Since we are copying blocks (A32) and (A23) anyway, it makes sense to transpose one of them
 //       during copy and use a more cache friendly "row-major by col-major" matrix multiplication,
 //       improving overall performance
+//
 template <typename T>
 void blockLU_serial(T *A, const size_t N, const size_t b) {
 	const size_t total_length = N * b + b * (N - b);
