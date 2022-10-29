@@ -47,13 +47,13 @@
 template <typename T>
 void LU_serial(T *A, const size_t ROWS, const size_t COLS) {
 	for (size_t i = 0; i < std::min(ROWS - 1, COLS); ++i) {
-		// (1)
+		// 1)
 		const T inverseAii = T(1) / A[i * COLS + i];
 
 		for (size_t j = i + 1; j < ROWS; ++j)
 			A[j * COLS + i] *= inverseAii;
 
-		// (2)
+		// 2)
 		for (size_t j = i + 1; j < ROWS; ++j)
 			for (size_t k = i + 1; k < COLS; ++k)
 				A[j * COLS + k] -= A[j * COLS + i] * A[i * COLS + k];
@@ -161,7 +161,7 @@ void blockLU_serial(T *A, const size_t N, const size_t b) {
 		A_32 = A_22 + rows_22 * cols_22;
 		A_23 = A_32 + rows_32 * cols_32;
 
-		// (1)
+		// 1)
 		// Find LU decomposition of block (A22 & A32)
 		span_copy_rm_to_rm(
 			// source
@@ -185,7 +185,7 @@ void blockLU_serial(T *A, const size_t N, const size_t b) {
 			i, i
 		);
 
-		// (2)
+		// 2)
 		// Solve (N - b - i) systems U22*x = <column of A23>
 		// to get A23 = L22^-1 * A23
 		span_copy_rm_to_cm(
@@ -213,7 +213,7 @@ void blockLU_serial(T *A, const size_t N, const size_t b) {
 			i, i + b
 		);
 
-		// (3)
+		// 3)
 		// A33 -= A32 * A23
 		span_substract_product(
 			// source 1

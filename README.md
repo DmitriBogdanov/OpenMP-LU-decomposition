@@ -23,6 +23,7 @@ Adjust in ROWS, COLS and BLOCK_SIZE in "main.cpp" to configure testing parameter
     * Code cleanup and renames across the board
     * Fixed typos in names, comments and docs
     * Added multiple comments with full method descriptions and notes about technical implementation
+    * Added safety guards for sizes that are not a multiple of BLOCK_SIZE
 
 * 00.11
     * Removed Windows-specific calls to allow compilation on Linux clusters
