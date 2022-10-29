@@ -118,7 +118,7 @@ void LU_serial(T *A, const size_t ROWS, const size_t COLS) {
 //   0 0 0 0 v v v v
 //   0 0 0 0 v v v v
 //
-// NOTE: SLAE solution require only backwards Gauss elimination due to the structure of (U22)
+// NOTE: SLAE solution requires only backwards Gauss elimination due to the structure of (U22)
 //
 // 3) Multiply blocks (A32) and (A23) and substract the result from (A33),
 //    aka 'A33 -= A32 * A23'
